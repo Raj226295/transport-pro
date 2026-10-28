@@ -1,0 +1,31 @@
+{
+  "name": "venom-liquid-button",
+  "version": "1.0.0",
+  "description": "A reusable glossy black pill button with physics-based Venom-style liquid tentacles (React + GSAP + SVG).",
+  "private": true,
+  "type": "module",
+  "main": "./VenomButton.jsx",
+  "exports": {
+    ".": "./VenomButton.jsx",
+    "./physics": "./venomPhysics.js",
+    "./config": "./venomConfig.js",
+    "./demo": "./VenomButtonDemo.jsx"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "keywords": [
+    "react",
+    "gsap",
+    "svg",
+    "button",
+    "liquid",
+    "venom",
+    "gooey"
+  ],
+  "peerDependencies": {
+    "gsap": "^3.12.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  }
+}
