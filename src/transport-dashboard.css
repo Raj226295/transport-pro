@@ -1664,6 +1664,15 @@
   .dashboard-app .dashboard-data-panel .dashboard-filter-search input{padding-left:54px!important;padding-inline-start:54px!important}
 }
 
+/* Keep the mobile navigation drawer above its click-away scrim in touch stacking contexts. */
+@media(max-width:767px){
+  .dashboard-app.mobile-nav-open .ops-layout{position:relative;z-index:42}
+  .dashboard-app.mobile-nav-open .ops-topbar{position:relative;z-index:44}
+  .dashboard-app.mobile-nav-open .ops-primary-nav{z-index:46;pointer-events:auto;touch-action:manipulation}
+  .dashboard-app.mobile-nav-open .ops-primary-nav-item{position:relative;z-index:1;touch-action:manipulation}
+  .dashboard-app.mobile-nav-open .mobile-nav-scrim{z-index:41}
+}
+
 /* Keep the All Bills controls compact on phones and render status choices in-page. */
 .all-bills-status-filter{position:relative;display:block;padding:0;z-index:4}
 .all-bills-status-filter.is-open{z-index:20}
