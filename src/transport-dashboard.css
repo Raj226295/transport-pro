@@ -1343,8 +1343,8 @@
   .dashboard-app .ops-brand-logo{display:block;width:auto;max-width:120px;height:42px;object-fit:contain}
   .dashboard-app .mobile-nav-toggle{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.9);border-radius:13px;background:rgba(255,255,255,.88);box-shadow:3px 4px 10px rgba(25,99,124,.12),inset 1px 1px 2px #fff;color:#10234a;cursor:pointer}
   .dashboard-app .mobile-nav-toggle svg{width:21px;height:21px}
-  .dashboard-app .ops-primary-nav{position:absolute;z-index:44;top:calc(100% + 8px);right:0;left:0;display:grid;grid-template-columns:1fr;gap:7px;width:auto;max-width:none;padding:10px;border:1px solid rgba(255,255,255,.95);border-radius:17px;background:rgba(237,251,253,.98);box-shadow:0 16px 34px rgba(17,81,106,.2),inset 1px 1px 2px #fff;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease,visibility .18s}
-  .dashboard-app.mobile-nav-open .ops-primary-nav{opacity:1;visibility:visible;transform:translateY(0)}
+  .dashboard-app .ops-primary-nav{position:fixed;z-index:44;top:calc(env(safe-area-inset-top) + 72px);right:10px;left:10px;display:grid;grid-template-columns:1fr;gap:7px;width:auto;max-width:none;padding:10px;border:1px solid rgba(255,255,255,.95);border-radius:17px;background:rgba(237,251,253,.98);box-shadow:0 16px 34px rgba(17,81,106,.2),inset 1px 1px 2px #fff;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease,visibility .18s}
+  .dashboard-app.mobile-nav-open .ops-primary-nav{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
   .dashboard-app .ops-primary-nav-item{justify-content:flex-start;min-height:46px;width:100%;max-width:none;padding:0 14px;border-radius:12px}
   .dashboard-app .ops-primary-nav-item[aria-current="page"]{background:#087a9d;color:#fff}
   .dashboard-app .mobile-nav-scrim{position:fixed;z-index:41;inset:0;display:block;border:0;background:rgba(8,31,50,.16)}
@@ -1624,6 +1624,15 @@
 .dashboard-app :is(.ops-home-link,.ops-logout){border:1px solid rgba(255,255,255,.68);border-radius:14px;background:rgba(235,252,255,.38);box-shadow:0 6px 15px rgba(0,93,111,.1),inset 0 1px 0 rgba(255,255,255,.75);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);color:var(--liquid-ink)}
 .dashboard-app .ops-logout{color:#b92f40}
 .dashboard-app .vehicle-management-page .dashboard-page-header h1{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-weight:700;color:var(--liquid-ink)}
+/* The hamburger is visible through 767px, so its drawer must share that range. */
+@media(min-width:721px) and (max-width:767px){
+  .dashboard-app .ops-topbar{position:relative;z-index:42;overflow:visible;display:flex;flex-wrap:nowrap;align-items:center}
+  .dashboard-app .mobile-nav-toggle{display:grid;place-items:center;position:relative;z-index:2;width:42px;height:42px;flex:none}
+  .dashboard-app .ops-primary-nav{position:fixed;z-index:44;top:calc(env(safe-area-inset-top) + 72px);right:10px;left:10px;display:grid;grid-template-columns:1fr;gap:7px;width:auto;max-width:none;padding:10px;border:1px solid rgba(255,255,255,.95);border-radius:17px;background:rgba(237,251,253,.98);box-shadow:0 16px 34px rgba(17,81,106,.2),inset 1px 1px 2px #fff;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease,visibility .18s}
+  .dashboard-app.mobile-nav-open .ops-primary-nav{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+  .dashboard-app .ops-primary-nav-item{justify-content:flex-start;min-height:46px;width:100%;max-width:none;padding:0 14px;border-radius:12px}
+  .dashboard-app .mobile-nav-scrim{position:fixed;z-index:41;inset:0;display:block;border:0;background:rgba(8,31,50,.16)}
+}
 @media(min-width:1024px){
   #services-app{
     background-color:#08bbc5;
