@@ -1,7 +1,7 @@
 /* eslint-disable react/only-export-components */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { ArrowLeft, ArrowRight, ArrowUpDown, Bell, Building2, CalendarDays, ChartNoAxesColumn, CheckCircle2, Clock3, Download, Eye, FilePlus2, FileText, Files, Home, IndianRupee, LayoutDashboard, List, LogOut, MapPin, Menu, MoreHorizontal, Package, Pencil, Pin, Plus, Printer, Route, Search, Settings, Share2, Truck, Users, WalletCards, X, Zap, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpDown, Bell, Building2, CalendarDays, ChartNoAxesColumn, CheckCircle2, ChevronDown, Clock3, Download, Eye, FilePlus2, FileText, Files, Home, IndianRupee, LayoutDashboard, List, LogOut, MapPin, Menu, MoreHorizontal, Package, Pencil, Pin, Plus, Printer, Route, Search, Settings, Share2, Truck, Users, WalletCards, X, Zap, type LucideIcon } from "lucide-react";
 import VenomButton from "./components/VenomButton";
 import CreateBillWorkspace, { downloadChallan, printChallan, readSavedBills, shareChallan, type BillData } from "./create-invoice";
 import "./transport-dashboard.css";
@@ -58,6 +58,46 @@ const routes = {
 } as const;
 
 const money = (value: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(value || 0);
+
+const billStatusOptions = [
+  { value: "all", label: "All statuses" },
+  { value: "payment:Paid", label: "Paid" },
+  { value: "payment:Partially Paid", label: "Partially Paid" },
+  { value: "payment:Unpaid", label: "Unpaid" },
+];
+
+function AllBillsStatusFilter({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const current = billStatusOptions.find((option) => option.value === value) ?? billStatusOptions[0];
+
+  useEffect(() => {
+    if (!open) return;
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (event.target instanceof Node && !rootRef.current?.contains(event.target)) setOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
+  return <div className={`all-bills-status-filter${open ? " is-open" : ""}`} ref={rootRef}>
+    <button type="button" className="all-bills-status-trigger" aria-label="Filter by payment status" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((shown) => !shown)}>
+      <span>{current.label}</span><ChevronDown className="all-bills-status-chevron" aria-hidden="true" />
+    </button>
+    {open && <div className="all-bills-status-options" role="listbox" aria-label="Payment status">
+      {billStatusOptions.map((option) => <button type="button" role="option" aria-selected={value === option.value} key={option.value} onClick={() => { onChange(option.value); setOpen(false); }}>
+        <span>{option.label}</span><span className="all-bills-status-radio" aria-hidden="true" />
+      </button>)}
+    </div>}
+  </div>;
+}
 const currentDate = new Date();
 const defaultBillDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
 
@@ -276,7 +316,7 @@ function BillsPage({ navigate, notify }: { navigate: (route: string) => void; no
     <div className="all-bills-toolbar">
       <label className="all-bills-search"><Search aria-hidden="true" /><span className="sr-only">Search saved bills</span><input type="search" value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Search bill no., company, route, vehicle or description…" /></label>
       <div className="all-bills-date-range"><CalendarDays aria-hidden="true" /><label><span className="sr-only">Date from</span><input aria-label="Date from" type="date" value={dateFrom} onChange={(event) => { setDateFrom(event.target.value); setPage(1); }} /></label><span aria-hidden="true">to</span><label><span className="sr-only">Date to</span><input aria-label="Date to" type="date" value={dateTo} onChange={(event) => { setDateTo(event.target.value); setPage(1); }} /></label></div>
-      <label className="all-bills-status-filter"><span className="sr-only">Filter by payment status</span><select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}><option value="all">All statuses</option><option value="payment:Paid">Paid</option><option value="payment:Partially Paid">Partially Paid</option><option value="payment:Unpaid">Unpaid</option></select></label>
+      <AllBillsStatusFilter value={status} onChange={(value) => { setStatus(value); setPage(1); }} />
       <button className="all-bills-create" type="button" onClick={() => navigate(routes.create)}><Plus aria-hidden="true" />Create Bill</button>
     </div>
     {selected && <div className="bill-detail"><div><span>Selected bill</span><strong>{selected.id}</strong><small>{selected.party} · {selected.from} → {selected.to}</small></div><div><PaymentBadge value={selected.paymentStatus!} /><strong>{money(selected.amount)}</strong><button type="button" onClick={() => navigate(routes.bills)} aria-label="Close bill details"><X aria-hidden="true" /></button></div></div>}
@@ -367,10 +407,18 @@ function TransportDashboard() {
     const app = document.getElementById("services-app");
     const website = document.querySelector<HTMLElement>(".track");
     if (!app || !website) return;
-    let previousScrollY = window.scrollY;
-    const open = () => { previousScrollY = window.scrollY; website.hidden = true; app.hidden = false; app.setAttribute("aria-hidden", "false"); if (!window.location.pathname.startsWith("/dashboard")) navigate(routes.dashboard); };
-    const close = () => { app.hidden = true; app.setAttribute("aria-hidden", "true"); website.hidden = false; window.history.pushState({}, "", "/"); window.scrollTo({ top: previousScrollY, behavior: "auto" }); document.getElementById("open-services")?.focus({ preventScroll: true }); };
-    const onPop = () => { if (window.location.pathname.startsWith("/dashboard")) open(); else { app.hidden = true; app.setAttribute("aria-hidden", "true"); website.hidden = false; } };
+    const showWebsite = () => {
+      setMobileNavOpen(false);
+      app.hidden = true;
+      app.setAttribute("aria-hidden", "true");
+      website.hidden = false;
+      document.dispatchEvent(new Event("homepage:reset"));
+      window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
+      document.getElementById("open-services")?.focus({ preventScroll: true });
+    };
+    const open = () => { setMobileNavOpen(false); website.hidden = true; app.hidden = false; app.setAttribute("aria-hidden", "false"); if (!window.location.pathname.startsWith("/dashboard")) navigate(routes.dashboard); };
+    const close = () => { showWebsite(); window.history.pushState({}, "", "/"); };
+    const onPop = () => { if (window.location.pathname.startsWith("/dashboard")) open(); else showWebsite(); };
     const onKey = (event: KeyboardEvent) => { if (!app.hidden && event.key === "Escape") close(); };
     document.addEventListener("services:open", open);
     document.addEventListener("services:close", close);

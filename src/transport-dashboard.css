@@ -1643,3 +1643,49 @@
   }
 }
 
+/* Keep the anchored logout control centered when touch browsers apply hover. */
+@media(max-width:767px){
+  .dashboard-app :is(.ops-home-link,.ops-logout):hover{transform:translateY(-50%) scale(1.03)}
+  .dashboard-app :is(.ops-home-link,.ops-logout):active{transform:translateY(-50%) scale(.96)}
+}
+
+/* Reserve a clear icon gutter in the mobile vehicle and goods search fields. */
+@media(max-width:720px){
+  .dashboard-app .dashboard-data-panel .dashboard-filter-search svg{top:50%;left:16px;width:20px;height:20px;transform:translateY(-50%);z-index:1}
+  .dashboard-app .dashboard-data-panel .dashboard-filter-search input{padding-left:54px!important;padding-inline-start:54px!important}
+}
+
+/* Keep the All Bills controls compact on phones and render status choices in-page. */
+.all-bills-status-filter{position:relative;display:block;padding:0;z-index:4}
+.all-bills-status-filter.is-open{z-index:20}
+.all-bills-status-trigger{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;height:100%;min-height:48px;padding:0 14px;border:0;border-radius:inherit;background:transparent;color:var(--bill-ink);font:500 14px/1.2 "Plus Jakarta Sans",sans-serif;text-align:left;cursor:pointer}
+.all-bills-status-trigger:focus-visible{outline:2px solid #007f98;outline-offset:2px}
+.all-bills-status-chevron{width:17px;height:17px;flex:none;color:#536b85;transition:transform .16s ease}
+.all-bills-status-filter.is-open .all-bills-status-chevron{transform:rotate(180deg)}
+.all-bills-status-options{position:absolute;z-index:30;top:calc(100% + 6px);right:0;left:0;display:grid;gap:2px;padding:5px;border:1px solid rgba(255,255,255,.94);border-radius:14px;background:rgba(239,252,253,.98);box-shadow:0 10px 24px rgba(8,63,82,.2),inset 0 1px 0 rgba(255,255,255,.95);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.all-bills-status-options button{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;min-height:42px;padding:0 11px;border:0;border-radius:10px;background:transparent;color:#10234a;font:500 13px/1.25 "Plus Jakarta Sans",sans-serif;text-align:left;cursor:pointer}
+.all-bills-status-options button:hover,.all-bills-status-options button[aria-selected="true"]{background:rgba(0,166,190,.1)}
+.all-bills-status-radio{width:16px;height:16px;flex:none;border:1.5px solid #8398a7;border-radius:50%}
+.all-bills-status-options button[aria-selected="true"] .all-bills-status-radio{border:5px solid #0789a4}
+@media(max-width:720px){
+  .all-bills-shell{gap:12px;padding:12px;border-radius:18px}
+  .all-bills-title-block{gap:10px}
+  .all-bills-title-icon{width:44px;height:44px;flex:none}
+  .all-bills-title-icon svg{width:21px;height:21px}
+  .all-bills-title-block h1{font-size:clamp(21px,6vw,25px);line-height:1.15}
+  .all-bills-title-block p{font-size:clamp(11px,3.2vw,13px);line-height:1.4}
+  .all-bills-shell .all-bills-stat{min-height:100px;padding:10px;border-radius:15px}
+  .all-bills-shell .all-bills-stat>div>strong{font-size:clamp(11px,7.4cqw,14px);letter-spacing:-.025em}
+  .all-bills-toolbar{gap:9px;padding:10px;border-radius:15px}
+  .all-bills-search,.all-bills-date-range,.all-bills-status-filter{height:46px;min-height:46px}
+  .all-bills-search{gap:8px;padding-inline:11px}
+  .all-bills-search input,.all-bills-search input::placeholder{font-size:12px}
+  .all-bills-date-range{display:grid;grid-template-columns:18px minmax(0,1fr) auto minmax(0,1fr);gap:5px;padding-inline:9px}
+  .all-bills-date-range label{width:100%;min-width:0}
+  .all-bills-date-range input{width:100%;font-size:10px}
+  .all-bills-date-range>span{font-size:10px}
+  .all-bills-status-trigger{min-height:44px;padding-inline:12px;font-size:13px}
+  .all-bills-status-options{padding:4px;border-radius:12px}
+  .all-bills-status-options button{min-height:40px;padding-inline:10px;font-size:12px}
+}
+
