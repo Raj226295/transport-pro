@@ -790,9 +790,8 @@
       const root=document.documentElement, track=document.querySelector('.track'), scene=document.querySelector('.scene');
       const video=document.querySelector('.handling'), strip=document.querySelector('.services-strip'), letters=document.querySelector('.letters');
       const cards=[...document.querySelectorAll('.card')], speedEl=document.querySelector('.readout span');
-      const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
       const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
-      let vw=innerWidth,vh=innerHeight,stripW=0,lettersW=0,B=3,target=0,cur=0,lastY=scrollY,lastT=performance.now(),speed=0,requested=false,recProgress=null,homeIntroStartedAt=null,holdHomeIntroFrame=false;
+      let vw=innerWidth,vh=innerHeight,stripW=0,lettersW=0,B=3,target=0,cur=0,lastY=scrollY,lastT=performance.now(),speed=0,requested=false,recProgress=null;
 
       function measure(){
         vw=innerWidth;const mobile=vw<768||vw<=innerHeight;vh=mobile?scene.clientHeight:innerHeight;let w,h,left,top;
@@ -809,7 +808,6 @@
       }
       document.addEventListener('homepage:reset',()=>{
         recProgress=null;cur=target=0;lastY=0;lastT=performance.now();speed=0;
-        homeIntroStartedAt=reducedMotion?null:performance.now();holdHomeIntroFrame=false;
         root.style.setProperty('--ph','0');root.style.setProperty('--progress','0');root.classList.remove('services-available');
         try{video.currentTime=0}catch(_){}
         seek();
@@ -820,17 +818,7 @@
         const y=recProgress===null?scrollY:recProgress*(A+B)*vh;
         const dt=Math.max(1,now-lastT),dy=Math.abs(y-lastY),instant=clamp(dy/dt/32,0,99);
         speed+=(instant-speed)*.18;lastY=y;lastT=now;
-        if(homeIntroStartedAt!==null&&scrollY===0){
-          const progress=clamp((now-homeIntroStartedAt)/1250),ease=1-Math.pow(1-progress,3);
-          target=ease*.72;cur=target;
-          if(progress>=1){homeIntroStartedAt=null;holdHomeIntroFrame=true}
-        }else{
-          if(scrollY!==0)homeIntroStartedAt=null;
-          const q=clamp(y/(A*vh));
-          if(holdHomeIntroFrame&&scrollY===0)target=cur;
-          else{holdHomeIntroFrame=false;target=q*(DURATION-1/48);cur+=(target-cur)*.2}
-        }
-        seek();
+        const q=clamp(y/(A*vh));target=q*(DURATION-1/48);cur+=(target-cur)*.2;seek();
         const r=clamp((y-A*vh)/(B*vh));
         root.style.setProperty('--ph',q>=.94?'1':'0');root.classList.toggle('services-available',q>=.94);root.style.setProperty('--progress',clamp(y/((A+B)*vh)).toFixed(4));
         strip.style.transform=`translate3d(${vw-r*(stripW+.45*vw)}px,0,0)`;
